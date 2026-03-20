@@ -18,7 +18,7 @@ export default function App() {
   }, [connect]);
 
   return (
-    <div className="w-screen h-screen bg-black overflow-hidden relative">
+    <div className="w-screen h-screen bg-black overflow-hidden relative select-none">
       <Canvas
         shadows
         camera={{ position: [0, 0, 50], fov: 60 }}

@@ -5,7 +5,7 @@
 
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useGameStore, globalGameState } from '../store/gameStore';
+import { useGameStore, globalGameState, globalInputState } from '../store/gameStore';
 import { WORLD_SIZE, TURN_SPEED, BOOST_SPEED, BASE_SPEED } from '../shared/types';
 import * as THREE from 'three';
 import { Sphere, Grid } from '@react-three/drei';
@@ -168,7 +168,6 @@ function Orbs() {
 export function GameScene() {
   const { gameState, playerId, sendPlayerState, sendCollectOrb } = useGameStore();
   const { camera } = useThree();
-  const inputs = useRef({ left: false, right: false, boost: false });
   const lightRef = useRef<THREE.DirectionalLight>(null);
   const [lightTarget] = useState(() => new THREE.Object3D());
 
@@ -190,19 +189,21 @@ export function GameScene() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') && !inputs.current.left) { inputs.current.left = true; }
-      if ((e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') && !inputs.current.right) { inputs.current.right = true; }
-      if ((e.key === ' ' || e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && !inputs.current.boost) { inputs.current.boost = true; }
+      if ((e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') && !globalInputState.left) { globalInputState.left = true; }
+      if ((e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') && !globalInputState.right) { globalInputState.right = true; }
+      if ((e.key === ' ' || e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && !globalInputState.boost) { globalInputState.boost = true; }
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
-      if ((e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') && inputs.current.left) { inputs.current.left = false; }
-      if ((e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') && inputs.current.right) { inputs.current.right = false; }
-      if ((e.key === ' ' || e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && inputs.current.boost) { inputs.current.boost = false; }
+      if ((e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') && globalInputState.left) { globalInputState.left = false; }
+      if ((e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') && globalInputState.right) { globalInputState.right = false; }
+      if ((e.key === ' ' || e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') && globalInputState.boost) { globalInputState.boost = false; }
     };
 
     const handleBlur = () => {
-      inputs.current = { left: false, right: false, boost: false };
+      globalInputState.left = false;
+      globalInputState.right = false;
+      globalInputState.boost = false;
     };
 
     window.addEventListener('keydown', handleKeyDown);
@@ -234,10 +235,10 @@ export function GameScene() {
       if (!localPlayerRef.current.active) return;
 
       // Local movement logic
-      if (inputs.current.left) localPlayerRef.current.currentAngle += TURN_SPEED * delta;
-      if (inputs.current.right) localPlayerRef.current.currentAngle -= TURN_SPEED * delta;
+      if (globalInputState.left) localPlayerRef.current.currentAngle += TURN_SPEED * delta;
+      if (globalInputState.right) localPlayerRef.current.currentAngle -= TURN_SPEED * delta;
       
-      localPlayerRef.current.isBoosting = inputs.current.boost && localPlayerRef.current.score > 10;
+      localPlayerRef.current.isBoosting = globalInputState.boost && localPlayerRef.current.score > 10;
       const speed = localPlayerRef.current.isBoosting ? BOOST_SPEED : BASE_SPEED;
       
       const head = { ...localPlayerRef.current.segments[0] };

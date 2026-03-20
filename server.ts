@@ -31,7 +31,7 @@ const io = new Server(httpServer, {
   },
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 const COLORS = [
   '#ff7eb3', // vibrant pink

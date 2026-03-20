@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import { useGameStore } from '../store/gameStore';
+import { useGameStore, globalInputState } from '../store/gameStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Trophy } from 'lucide-react';
+import { ExternalLink, Trophy, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
 
 export function UI() {
   const { gameState, playerId, joinGame } = useGameStore();
@@ -74,6 +74,46 @@ export function UI() {
                 <span className="font-mono text-white/80">{entry.score}</span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Controls */}
+      {isAlive && (
+        <div className="absolute bottom-8 left-4 right-4 flex justify-between items-end pointer-events-none sm:hidden z-20">
+          {/* Steering */}
+          <div className="flex gap-4 pointer-events-auto">
+            <button
+              onPointerDown={(e) => { e.preventDefault(); globalInputState.left = true; }}
+              onPointerUp={(e) => { e.preventDefault(); globalInputState.left = false; }}
+              onPointerLeave={(e) => { e.preventDefault(); globalInputState.left = false; }}
+              onPointerCancel={(e) => { e.preventDefault(); globalInputState.left = false; }}
+              className="w-16 h-16 bg-white/10 active:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 touch-none"
+            >
+              <ChevronLeft size={32} className="text-white" />
+            </button>
+            <button
+              onPointerDown={(e) => { e.preventDefault(); globalInputState.right = true; }}
+              onPointerUp={(e) => { e.preventDefault(); globalInputState.right = false; }}
+              onPointerLeave={(e) => { e.preventDefault(); globalInputState.right = false; }}
+              onPointerCancel={(e) => { e.preventDefault(); globalInputState.right = false; }}
+              className="w-16 h-16 bg-white/10 active:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 touch-none"
+            >
+              <ChevronRight size={32} className="text-white" />
+            </button>
+          </div>
+
+          {/* Boost */}
+          <div className="pointer-events-auto">
+            <button
+              onPointerDown={(e) => { e.preventDefault(); globalInputState.boost = true; }}
+              onPointerUp={(e) => { e.preventDefault(); globalInputState.boost = false; }}
+              onPointerLeave={(e) => { e.preventDefault(); globalInputState.boost = false; }}
+              onPointerCancel={(e) => { e.preventDefault(); globalInputState.boost = false; }}
+              className="w-20 h-20 bg-white/10 active:bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/20 touch-none"
+            >
+              <Zap size={36} className="text-yellow-400" fill="currentColor" />
+            </button>
           </div>
         </div>
       )}
